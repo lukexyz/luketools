@@ -1,2 +1,2 @@
 # luketools
-Private repo for dev tools
+Personal repo for dev tools
