@@ -5,6 +5,15 @@ SendMode Input  ; Recommended for new scripts due to its superior speed and reli
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 
+; -------- EN DASH  ------------
+;(alt dash -> send en dash) 
+
+!-::
+	send {ASC 0150}
+return
+
+
+
 ; -------- ALT ARROWS KEYS "IJKL" ------------
 
 !I::
@@ -22,6 +31,7 @@ return
 !L::
     send {right}
 return
+
 
 ; ------------ LINE JUMPS ----------------
 
@@ -42,6 +52,7 @@ return
 !`;::
     send {end}
 return
+
 
 
 ; ------------ MEDIA CONTROL ----------------
