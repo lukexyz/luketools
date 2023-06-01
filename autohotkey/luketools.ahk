@@ -5,6 +5,54 @@ SendMode Input  ; Recommended for new scripts due to its superior speed and reli
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 
+; ---------- PRESENTATION MODE  -----------
+;           (Added 2023-06-01)
+; ----------------------------------------
+#Persistent  ; Ensures the script keeps running permanently
+
+presentation_mode := false  ; Initializes the presentation_mode variable to false
+
+!p::  ; TOGGLE PRESENTATION MODE ("alt + p")
+    presentation_mode := !presentation_mode
+    if presentation_mode {
+        MsgBox,, Presentation Mode, Presentation Mode ON, .5  ; .5 for half a second, adjust as needed
+        SetTimer, CloseMsgBox, -500  ; -500 for half a second, adjust as needed
+    }
+    else {
+        MsgBox,, Presentation Mode, Presentation Mode OFF, .5
+        SetTimer, CloseMsgBox, -500
+    }
+return
+
+CloseMsgBox:
+    WinClose, Presentation Mode
+return
+
+#If presentation_mode  ; The hotkeys following will only be active if presentation_mode is true
+
+    1::             ; HIGHLIGHTER ("ctrl + shift + Q" hotkey remapped to "1")
+        send ^+{q}
+    return 
+
+    2::             ; UNDO
+        send ^+{6}
+    return 
+
+    3::             ; CLEAR SCREEN
+        send ^+{x}
+    return 
+
+    4::             ; CURSOR
+        send ^+{z}
+    return 
+
+    5::             ; SHOW/HIDE EPIC PEN
+        send ^+{1}
+    return 
+
+#If  ; Ends the conditional block
+
+
 ; -------- EN DASH  ------------
 ;(alt dash -> send en dash) 
 
