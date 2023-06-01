@@ -12,6 +12,9 @@ alias cls="clear"
 alias ls="ls -l"
 alias dir="ls -l"
 
+# https://news.ycombinator.com/item?id=32998960
+alias brownnoise='play -n synth brownnoise synth pinknoise mix synth sine amod 0.3 10'
+
 cd /mnt/d/python
 echo ''
 ls
