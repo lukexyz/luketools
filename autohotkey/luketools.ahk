@@ -34,8 +34,8 @@ return
         send ^+{q}
     return 
 
-    2::             ; UNDO
-        send ^+{6}
+    2::             ; SQUARE ("2" sends "ctrl + shift + a") PREVIOUSLY UNDO (^+{6})
+        send ^+{a}
     return 
 
     3::             ; CLEAR SCREEN
