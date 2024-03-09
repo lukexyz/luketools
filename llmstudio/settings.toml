@@ -2,4 +2,4 @@ selected_model = "gpt-3.5-turbo"
 
 [system_prompt]
 role = "system"
-content = "Always answer in a riddle."
+content = "Always answer with a perplexing riddle."

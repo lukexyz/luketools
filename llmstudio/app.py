@@ -6,11 +6,13 @@ import json
 
 from settings import get_system_prompt, update_system_prompt, load_settings
 from settings import get_selected_model, update_selected_model
+from settings import apply_style, set_page_title
 
-st.set_page_config(layout="wide", initial_sidebar_state='collapsed', page_icon="🧊")
+st.set_page_config(layout="wide", initial_sidebar_state='collapsed', page_icon="💎")
+set_page_title("llm-studio")
+apply_style()
 
 # ============== Init settings ============== #
-
 
 # Assuming this is run at the start of your app.py
 # Check if the model has already been set in the session state
