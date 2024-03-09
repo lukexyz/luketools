@@ -2,6 +2,8 @@ from openai import OpenAI
 import streamlit as st
 import os
 
+from settings import get_system_prompt, update_system_prompt
+
 st.set_page_config(layout="wide", initial_sidebar_state='collapsed', page_icon="🧊")
 
 # client = OpenAI(base_url="http://localhost:1234/v1", api_key="not-needed")
@@ -14,11 +16,10 @@ if "model" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-default_system_prompt = {"role": "system", "content": "Always answer in a riddle."}
 if "system_prompt" not in st.session_state:
-    st.session_state.system_prompt = default_system_prompt
+    st.session_state.system_prompt = get_system_prompt()
 
-# ============== Layout ==============
+# ============== App ============== #
 
 col1, col2 = st.columns([1, 2])
 
@@ -27,6 +28,7 @@ with col1:
         system_content = st.text_area("Edit system prompt:", st.session_state.system_prompt["content"])
         if system_content != st.session_state.system_prompt["content"]:
             st.session_state.system_prompt["content"] = system_content
+            update_system_prompt(system_content)
         
 
 with col2:
