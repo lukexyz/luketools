@@ -12,6 +12,9 @@ st.set_page_config(layout="wide", initial_sidebar_state='collapsed', page_icon="
 set_page_title("llm-studio")
 apply_style()
 
+
+st.image("media/llworld.png", width=300)
+
 # ============== Init settings ============== #
 
 # Assuming this is run at the start of your app.py
@@ -45,6 +48,9 @@ if "system_prompt" not in st.session_state:
     st.session_state.system_prompt = get_system_prompt()
 
 # ============== App ============== #
+
+# Create a column layout
+
 
 col1, col2 = st.columns([1, 2])
 
