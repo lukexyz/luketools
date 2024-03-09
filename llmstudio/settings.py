@@ -46,3 +46,20 @@ def update_system_prompt(new_prompt_content):
     settings["system_prompt"] = {"role": "system", "content": new_prompt_content}
     # Save the updated settings
     save_settings(settings)
+
+# New function to get the selected model
+def get_selected_model():
+    settings = load_settings()
+    if settings and "selected_model" in settings:
+        return settings["selected_model"]
+    else:
+        # Default model if not set in TOML
+        default_model = "gpt-3.5-turbo"
+        save_settings({"selected_model": default_model})
+        return default_model
+
+# New function to update the selected model
+def update_selected_model(new_model):
+    settings = load_settings() or {}
+    settings["selected_model"] = new_model
+    save_settings(settings)
