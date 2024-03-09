@@ -1,0 +1,9 @@
+# default .streamlit/config.toml found at C:\Users\<YourUsername>\.streamlit
+
+[theme]
+base="dark"
+primaryColor="#E694FF"
+backgroundColor="#00172B"
+secondaryBackgroundColor="#004D7F"
+textColor="#FFFFFF"
+font="sans serif"

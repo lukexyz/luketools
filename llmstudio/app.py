@@ -35,9 +35,6 @@ if st.session_state["model"] == "local-model":
 else:
     client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
-# Debugging line to display the currently selected model
-st.write(f"Current model from session: {st.session_state['model']}")
-
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -91,22 +88,24 @@ If Player1 does not challenge the claim, the assassination attempt is blocked, a
             ee = "Attempt a different action instead of assassination."
 
 
-# ============== Debugging ============== #
-# tabs
+# ===================== Debug Menu =======================   
+                    
+#     __         __                       __              
+# .--|  |.-----.|  |--.--.--.-----.-----.|__|.-----.-----.
+# |  _  ||  -__||  _  |  |  |  _  |  _  ||  ||     |  _  |
+# |_____||_____||_____|_____|___  |___  ||__||__|__|___  |
+#                           |_____|_____|          |_____|
+
 
 tab0, tab1, tab2, tab3, tab4 = st.tabs(["Toml", "System Prompt", "Response", "Messages", "Session State"])
-with tab0: 
-    st.write("`settings.toml`")
-    st.code(f'{toml.dumps(load_settings())}', language='toml')
+with tab0: st.code(f'{toml.dumps(load_settings())}', language='toml')
 with tab1: st.code(f'system prompt: {st.session_state.system_prompt["content"]}')
 with tab2: 
     try: 
         st.code(f'response: {response}')  # Ensure 'response' is defined or fetched appropriately
-    except NameError: st.write("No response yet")
+    except NameError: st.code("No response yet")
 with tab3: st.code(f'messages: {st.session_state.messages}')  # Assuming 'st.session_state.messages' is defined
-with tab4: 
-
-    st.code(json.dumps(dict(st.session_state), indent=2), language="json")
+with tab4: st.code(json.dumps(dict(st.session_state), indent=2), language="json")
     
 
 
