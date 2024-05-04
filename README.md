@@ -9,8 +9,8 @@ Personal repo for dev tools
   using github cli  
 
 ```
-> `conda install gh --channel conda-forge`
-> `gh auth login`
+> conda install gh --channel conda-forge
+> gh auth login
 ```
 
 **📦 Fast package install using `Mamba`**  
