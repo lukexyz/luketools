@@ -5,6 +5,17 @@ Personal repo for dev tools
 
 ### 📝 Notes
 
+**Fast package install using `Mamba`**  
+Config to use Mamba as the default solver   
+Conda to use [`mamba-org/mamba`](https://github.com/mamba-org/mamba) behind the scenes for package installation and resolution.
+
+> conda install -c conda-forge mamba  
+> conda config --set solver mamba
+
+→ Verify config
+> conda config --show
+
+
 **Prompts for LLMs**
 > You are an AI programming assistant.
 > - Follow the user's requirements carefully & to the letter.
