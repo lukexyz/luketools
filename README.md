@@ -27,6 +27,21 @@ Conda to use [`mamba-org/mamba`](https://github.com/mamba-org/mamba) behind the 
 ```
 </br>  
 
+
+### 📝 Jupyter Pro
+
+**Jupyter:** 
+Directly look at a function's source code  
+```
+??{my_function}  
+```
+
+If using **nb_dev**: 
+```doc(my_function)```  
+ will show a link to the documentation.
+
+</br>
+
 **💬 Prompts for LLMs**    
 
 COT reasoning custom instruction from [jph00](https://twitter.com/jeremyphoward/status/1689464589191454720?lang=en-GB) (twitter)
@@ -58,13 +73,5 @@ Don't be verbose in your answers, but do provide details and examples where they
 > Question: Write a quote that has exactly 10 words.
 
 
-### 📝 Jupyter
 
-**Jupyter:** 
-Directly look at a function's source code using
-`??my_function`  
-
-If using **nb_dev**: `doc(my_function)` will show a link to the documentation.
-
-</br>
 
