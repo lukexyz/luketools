@@ -1,4 +1,4 @@
-selected_model = "gpt-3.5-turbo"
+selected_model = "local-model"
 
 [system_prompt]
 role = "system"

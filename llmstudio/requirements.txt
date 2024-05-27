@@ -2,3 +2,6 @@ streamlit
 openai
 rich
 toml
+pytube
+pydub
+moviepy

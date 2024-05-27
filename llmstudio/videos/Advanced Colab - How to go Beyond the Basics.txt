@@ -1,0 +1,245 @@
+[0:00:00]  OK, so in the previous Colab, I talked about all the sort of beginner stuff.
+[0:00:04]  In this one, I'm going to go into some more
+[0:00:06]  advanced tips and some things that you probably should check out
+[0:00:10]  if you're going to be using Colab quite regularly.
+[0:00:13]  So the first one is one just to make sure
+[0:00:16]  that everyone got this is one that I talked about in the previous lesson.
+[0:00:19]  And that's secrets.
+[0:00:21]  So just make sure you know how to set up secrets.
+[0:00:24]  So you're setting up your environment
+[0:00:26]  variables and you can store these in here and then use them going forward.
+[0:00:29]  If you're not sure how to do that, go back and watch that.
+[0:00:31]  I went through that at the end of the beginners course in there.
+[0:00:35]  And this is something that's quite recent to Colab.
+[0:00:37]  So even if you've been using Colab for a while, you may not have seen this before.
+[0:00:41]  The next one up that I want to talk about is the whole idea of snippets.
+[0:00:46]  So if I come in here and I've got a new Colab, right.
+[0:00:50]  And let's say I want to basically build
+[0:00:53]  something where I'm going to have a hugging face model in here.
+[0:00:59]  What I can come down here is click into snippets and I can basically just say,
+[0:01:04]  so I've been getting this set up and come in here and just say basically say, OK,
+[0:01:08]  transformers and I can see that, OK, transformers LLM test.
+[0:01:12]  I can click to add that and then insert that, close out the snippet.
+[0:01:17]  And you'll see that now I've basically got
+[0:01:20]  empty stuff at the top, which I can delete.
+[0:01:22]  But now I've got a setup for loading up
+[0:01:25]  transformers, the latest version from GitHub.
+[0:01:28]  I've got checking the NVIDIA GPU in here.
+[0:01:32]  I've got an example of bringing in one of the hugging face models.
+[0:01:36]  In this case, it's the Mistral Zephyr model.
+[0:01:39]  But that's going to be very easy to change.
+[0:01:41]  And I've also got the whole sort of setup
+[0:01:43]  for basically setting up as a pipeline, my text wrap function in here,
+[0:01:48]  my generate function in here for doing this.
+[0:01:50]  And then I've got an example of calling that.
+[0:01:52]  So all of this code just magically appears.
+[0:01:56]  So how does that happen?
+[0:01:57]  If you come into snippets,
+[0:01:59]  you've got a whole bunch of snippets that Google gives you.
+[0:02:03]  And a lot of those are things like
+[0:02:05]  connecting to Gemini, camera capture, these kind of things.
+[0:02:08]  But you can make your own.
+[0:02:10]  So how do you make your own?
+[0:02:12]  So if you come up here and you go to settings in here, you'll see that you can
+[0:02:16]  basically set a custom snippet notebook URL.
+[0:02:21]  So you can basically just copy one of your
+[0:02:23]  colabs over and make that a set of snippets.
+[0:02:27]  So let me sort of walk you through this and you can see what I've got here.
+[0:02:30]  So I've got like this whole thing here for using different libraries.
+[0:02:35]  If I want to use pandas, if I want to use TensorFlow,
+[0:02:38]  if I want to bring in different data sets that I used to use a lot with Confusion
+[0:02:42]  Matrix, all these kind of things, I can just bring in and use them straight
+[0:02:46]  out of the box. So here, for example, if I want to get
+[0:02:49]  just a simple Flax or Jax set up, I can just come in and basically do that.
+[0:02:54]  If I want to do something more sort of Lang chain,
+[0:02:57]  here you can see the Lang chain Anthropic set up.
+[0:02:59]  So I've got my standard sort of set up using the Anthropic keys.
+[0:03:03]  I can bring it in.
+[0:03:04]  I've got it set up for each of the different models.
+[0:03:07]  So it's quite easy for me to go through and change that.
+[0:03:10]  If I want to do it for OpenAI, I can do that here.
+[0:03:13]  If I want to do a Lang graph or
+[0:03:14]  different sorts of setups, I can do this here.
+[0:03:17]  So setting up snippets is something that will really help you to basically just get
+[0:03:22]  better results out of whatever it is that you're doing.
+[0:03:25]  So this is a really simple thing that you can do, but very quickly you can just have
+[0:03:30]  it so that for me, the whole idea of Colab and the thing that makes Colab really
+[0:03:35]  good is just very quickly I can go from idea to some working code.
+[0:03:40]  That's the goal for me, right?
+[0:03:42]  How quickly can I get to some working code to try out an idea, whether that's
+[0:03:46]  building an agent, whether that's testing out a new model, something like that.
+[0:03:50]  How quickly can I get it up, get it running, see how well this is going to work?
+[0:03:55]  And then I can focus on maybe fixing up
+[0:03:57]  the code or changing some things here and there.
+[0:03:59]  So to do this, snippets is just such a useful tool here for a whole bunch
+[0:04:04]  of different things, both for local kind of stuff, but also for integrating to
+[0:04:10]  Google Cloud, a whole bunch of different things in there and the things that a lot
+[0:04:13]  of the ones that are in Google's ones, they're just simple things
+[0:04:16]  that you often forget how to do.
+[0:04:18]  Now, things like Pandas load CSV and stuff
+[0:04:21]  like that, probably nowadays not as needed as in the past,
+[0:04:27]  because this brings us to the next sort of advanced feature.
+[0:04:30]  And this is the whole sort of generate with AI or Colab AI.
+[0:04:34]  I don't know if this is available everywhere in the world.
+[0:04:37]  I know it's available most places in the world now.
+[0:04:39]  Google released this sort of mid to late last year.
+[0:04:43]  And the idea here is that you can basically have it where you can put in a prompt
+[0:04:48]  and you can ask it, OK, how do I, for example, something like this where I can chat to it.
+[0:04:53]  So it's basically like a GitHub copilot in here.
+[0:04:57]  And at any point I can copy this or I can just insert this.
+[0:05:01]  You see, when I insert it, I basically get it in here.
+[0:05:04]  So it is like an on the fly snippet maker, right?
+[0:05:08]  It is the way that I use this.
+[0:05:10]  There are two ways to use it.
+[0:05:11]  You can use it with this chat example here that we've got going here,
+[0:05:16]  or you can just come in here and do it in here.
+[0:05:19]  So, for example, I might say, OK, so I say something like write me
+[0:05:24]  a loop that iterates through a list called items and prints each item.
+[0:05:28]  And you can see that once I basically press enter, that will just put this in and do it.
+[0:05:33]  Now it'll put in a comment for the prompt that I used, which can be useful.
+[0:05:37]  It'll give us four different examples so that we can see.
+[0:05:41]  Now, in this case, it's such an easy thing that the examples are not very different,
+[0:05:45]  but often the examples will be different.
+[0:05:47]  That's something that you can kind of use in there as well.
+[0:05:51]  And then once we've accepted this, we can just press close over here.
+[0:05:55]  And then now it's just become like a normal code cell in here.
+[0:05:57]  If I want to delete the prompt, I can go and delete the prompt in here.
+[0:06:01]  So this can be really useful when you've got a package or something.
+[0:06:05]  You're not really 100 percent sure how to use it.
+[0:06:06]  You just want to ask it a quick question.
+[0:06:08]  Hey, write me something that does this or that checks that.
+[0:06:12]  Write me a unit test, that kind of thing.
+[0:06:14]  So I'd say Colab AI is definitely worth checking out.
+[0:06:17]  It is available both in the free version
+[0:06:20]  of Colab and the paid version of Colab in different parts of the world.
+[0:06:24]  I'm not sure currently what the state of rolling that out is.
+[0:06:27]  OK, so another advanced sort of Colab feature I wanted to show you is how you
+[0:06:32]  can actually integrate Colab with Google Cloud.
+[0:06:34]  So if you're not a Google Cloud user,
+[0:06:36]  this probably is not going to apply to you.
+[0:06:38]  But if you are, there's some nice things that you can do in here.
+[0:06:41]  So what I'll do is come into the marketplace
+[0:06:44]  and if I come in here and type in Colab, you'll see that, OK,
+[0:06:49]  I can select Colab in here now.
+[0:06:51]  There's also another version of Colab called Colab Enterprise.
+[0:06:54]  I'm not actually going to go through that in this video.
+[0:06:57]  That's kind of built into Vertex AI.
+[0:06:59]  So maybe in the future we can sort of look at that.
+[0:07:01]  All right. So what I want to do is I want
+[0:07:03]  to come in here and spin up a custom machine for Colab.
+[0:07:07]  So if I click launch, you'll see that I go into this part
+[0:07:11]  here where I can select what exactly it is that I want.
+[0:07:15]  So let's say I want something with four NVIDIA T4s in here.
+[0:07:21]  So I'm just going to set up Colab one, let's say T4s,
+[0:07:26]  or let's say four T4s, right, for this.
+[0:07:30]  Now, I basically select the zone.
+[0:07:32]  I can select what sort of compute I want the VM to be, etc.
+[0:07:36]  And the idea here is that I'm using
+[0:07:38]  something that I'm actually telling it what kind of VM I want to do this.
+[0:07:44]  Now, I can then set up more things about the disk.
+[0:07:46]  I can allocate more disk size and stuff like that.
+[0:07:50]  So if you've seen me do videos where I have like multiple A100s in Colab,
+[0:07:55]  one of the ways to do that is through this, where I can basically just specify
+[0:07:59]  that I want multiple GPUs in here.
+[0:08:02]  All right, once I've got that, I'm going to basically just click deploy.
+[0:08:06]  And you'll see that it's going to take a while to actually spin up that machine
+[0:08:10]  and give us an instance for this.
+[0:08:13]  So this will normally take a few minutes while it's actually spinning up.
+[0:08:17]  OK, and then after it's set up, you'll basically see that we've got the tick
+[0:08:20]  here and you'll see that now we can connect to the VM with Colab.
+[0:08:24]  So if I click this, it's going to open up a new Colab.
+[0:08:28]  And I will basically just make a new notebook.
+[0:08:31]  OK, now you can see that I've got my new
+[0:08:33]  notebook here and I can basically mention testing four T4s in here.
+[0:08:40]  All right. Now, when I connect to this,
+[0:08:43]  you'll see that I'm actually connecting to this instance.
+[0:08:46]  Now, basically hide the actual project name.
+[0:08:48]  But you'll be able to see that I'm in zone US1B here.
+[0:08:52]  I've got my instance there.
+[0:08:54]  I just click connect.
+[0:08:56]  And what it will do is basically connect
+[0:08:58]  to that VM that I spun up and basically using this.
+[0:09:02]  So I'm not going to really do anything
+[0:09:04]  with this, but let's just see if I do NVIDIA SMI.
+[0:09:07]  Rather than seeing one T4, I should be seeing four.
+[0:09:11]  And sure enough, you can see now I've got four T4s set up there.
+[0:09:16]  So if I wanted to do training with multiple GPUs and stuff like that,
+[0:09:20]  this allows me to easily set it up so I can do the training with multiple GPUs.
+[0:09:25]  And it doesn't even have to be GPUs.
+[0:09:27]  We could have set up a TPU pod slice in here and stuff like that as well.
+[0:09:32]  This is one of the things that we can look at in here.
+[0:09:34]  Now, one of the issues, if you are trying
+[0:09:36]  to basically get GPUs, getting allocations of GPUs or at least
+[0:09:42]  A100s, et cetera, can be quite challenging for certain regions.
+[0:09:46]  So you want to play around with getting it set up and being able to do this.
+[0:09:49]  But here you can see now I've basically got a custom Colab where I've got all
+[0:09:53]  the advantages of my normal Colab, I've got my secrets in here,
+[0:09:57]  I've got my snippets, I've got all the other things,
+[0:10:00]  but I'm using a custom VM at the back end where if I wanted a VM with a lot of RAM
+[0:10:06]  or with multiple GPUs like this, I can easily do this and go through it.
+[0:10:11]  So that's another one of the advanced
+[0:10:13]  features that you can look at doing with Colab.
+[0:10:17]  So the next thing that I want to talk about is actually a Chrome extension.
+[0:10:20]  So you can't actually see my extensions in the window here,
+[0:10:24]  but this is the one that I'm running.
+[0:10:26]  So this is basically opening Colab.
+[0:10:29]  And the idea here is that anytime that you find a notebook in GitHub,
+[0:10:34]  you can press this extension and it will open it up as if it's a Colab.
+[0:10:38]  So you will still have to install like packages and stuff like that,
+[0:10:42]  but it makes it very easy to basically get things out.
+[0:10:45]  So an example of this here, you can see I've come into the Google
+[0:10:49]  Cloud Platform Generative AI.
+[0:10:51]  We've got a number of IPython notebooks
+[0:10:53]  here that we know that, OK, these can load up.
+[0:10:56]  Now, Google themselves will generally put a link to a Colab in here.
+[0:11:02]  So you'll see something like this where it's got running Colab.
+[0:11:05]  But a lot of people won't.
+[0:11:06]  And so you can see that if we've got
+[0:11:08]  something like this, we can just come up here and open this in Colab.
+[0:11:13]  And what it will do is basically you can
+[0:11:16]  open any notebook in Colab by just changing the pathway and then it will
+[0:11:20]  basically open it up so you can see that from this, it just takes the slash GitHub
+[0:11:24]  slash the repo name, et cetera, and puts this all in there.
+[0:11:28]  And now we've got it loaded up.
+[0:11:29]  We could use it just like a normal Colab in here.
+[0:11:32]  So this I find often very useful for just
+[0:11:35]  quickly getting a nice, simple way to basically get a notebook that someone's
+[0:11:41]  put a notebook in their repo or something like that.
+[0:11:43]  And I want to check it out.
+[0:11:44]  I can just load it up here.
+[0:11:45]  And then once it's here, I can just copy
+[0:11:47]  it to drive and I've got my own copy of it for me to mess around with, et cetera.
+[0:11:51]  All right. So that covers most of the advanced ones.
+[0:11:54]  But the last ones are some fun ones.
+[0:11:57]  And these were originally, I think, April Fool's Day kind of things.
+[0:12:01]  These are the various modes that you can have for running this.
+[0:12:06]  And you'll see that you then get different characters being corgis, cats.
+[0:12:13]  And Google has a very weird thing about crabs.
+[0:12:16]  They've added crabs to this as well.
+[0:12:18]  Can be quite humorous at times.
+[0:12:20]  I can see there's the cute cat up there.
+[0:12:22]  The other one is power, which you can basically set to do, I think,
+[0:12:26]  some visual effects or something.
+[0:12:27]  Honestly, I haven't played with that one that long.
+[0:12:30]  But these different modes are actually quite fun for getting kids interested
+[0:12:34]  in coding and stuff like that.
+[0:12:35]  I found this to be quite cool in here.
+[0:12:37]  So I think if I leave it there and that
+[0:12:39]  can be one of the advanced features as we see all these characters running
+[0:12:43]  across Intro to Gemini Pro in here, hopefully you found some things in here useful.
+[0:12:49]  I do find it very easy for just sketching out ideas quickly on this.
+[0:12:53]  Don't forget, as always, you can basically save the code in Python.
+[0:12:58]  And by basically downloading it, you can just download an iPython notebook.
+[0:13:02]  You can download just the Python, bring it into VS Code and stuff like that.
+[0:13:05]  So if I'm doing stuff for production,
+[0:13:07]  I would normally start out here,
+[0:13:09]  then move across to VS Code for a lot of these kinds of things.
+[0:13:13]  Anyway, as always, if you've got any questions, et cetera,
+[0:13:16]  put them in the comments below.
+[0:13:17]  Let me know if there's any tips for Colab that I've missed.
+[0:13:21]  Please let me know.
+[0:13:22]  Always interested to see new and cool sort
+[0:13:24]  of Colab tips and ways that people use it out there.
+[0:13:28]  And of course, if you found the video useful, please click like and subscribe.
+[0:13:31]  And I will talk to you in the next video.
+[0:13:33]  Bye for now.
