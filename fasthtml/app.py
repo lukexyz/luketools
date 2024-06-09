@@ -1,3 +1,5 @@
+# > uvicorn fasthtml.app:app --reload
+
 from fasthtml import *
 
 app = FastHTML(hdrs=[picolink])
@@ -31,8 +33,10 @@ def page3():
             P("You can also click on the links in the menu to navigate to other pages."),
             A("Back to Home", href="/"),
             cls="container")
-            
+
 @app.post("/")
 def add_message(data:str):
     messages.append(data)
     return home()
+
+
