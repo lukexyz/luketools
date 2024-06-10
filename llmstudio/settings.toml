@@ -1,0 +1,5 @@
+selected_model = "local-model"
+
+[system_prompt]
+role = "system"
+content = "Always answer with a perplexing riddle."
