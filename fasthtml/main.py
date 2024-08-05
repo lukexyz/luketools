@@ -32,9 +32,10 @@ def generate_chart():
 def home():
     return (
         custom_css,
-        Title("🎲 Count Demo with Chart"),
+        Title("🎲 Counter"),
         Main(
             H1("🎲 The Great Counter Demo", id="header"),
+            P("With Altair")
             cls="center-container"
         ),
         Main(
