@@ -1,0 +1,458 @@
+From: https://gist.github.com/jph00/f1cfe4f94a12cb4fd57ad7fc43ebd1d0
+Taken: 2024-08-05
+
+# FastHTML By Example
+
+An alternative introduction
+
+There are lots of non-FastHTML-specific tricks and patterns involved in building web apps. The goal of this tutorial is to give an alternate introduction to FastHTML, building out example applications to show common patterns and illustrate some of the ways you can build on top of the FastHTML foundations to create your own custom web apps. A secondary goal is to have this be a useful document to add to the context of an LLM to turn it into a useful FastHTML assistant - in fact, in some of the examples we’ll see this kind of assistant in action, thanks to this custom GPT.
+
+Let’s get started.
+
+## FastHTML Basics
+
+FastHTML is _just python_. You can install it with `pip install python-fasthtml`, and extensions/components built for it can likewise be distriuted via pypi or as simple python files.
+
+The core usage of FastHTML is to define routes, and then to define what to do at each route. This is similar to the FastAPI web framework (in fact we implemented much of the fuctionality to match the FastAPI usage examples) but where FastAPI focuses on returning JSON data to build APIs, FastHTML focuses on returning HTML data.
+
+Here’s a simple FastHTML app that returns a “Hello, World” message:
+
+```
+from fasthtml import FastHTML
+
+app = FastHTML()
+
+@app.get("/")
+def home():
+    return "<h1>Hello, World</h1>"__
+```
+
+To run this app, place it in a file, say `app.py`, and then run it with `uvicorn app:app --reload`.
+
+If you navigate to http://127.0.0.1:8000 in a browser, you’ll see your “Hello, World”. If you edit the `app.py` file and save it, the server will reload and you’ll see the updated message when you refresh the page in your browser.
+
+## Constructing HTML
+
+Notice we wrote some HTML in the previous example. We don’t want to do that! Some web frameworks require that you learn HTML, CSS, Javascript AND some templating language AND python. We want to do as much as possible with just one language. Fortunately, fastcore.xml has all we need for constructing HTML from python, and FastHTML includes all the tags you need to get started. For example:
+
+```
+from fasthtml.common import *
+page = Html(
+    Head(Title('Some page')),
+    Body(Div('Some text, ', A('A link', href='https://example.com'), Img(src="https://placehold.co/200"), cls='myclass')))
+print(to_xml(page))
+```
+
+If that `import *` worries you, you can always import only the tags you need.
+
+FastHTML is smart enough to know about fastcore.xml, and so you don’t need to use the `to_xml` function to convert your XT objects to HTML. You can just return them as you would any other python object. For example, if we modify our previous example to use fastcore.xml, we can return an XT object directly:
+
+```
+app = FastHTML()
+
+@app.get("/")
+def home():
+    return Div(H1('Hello, World'), P('Some text'), P('Some more text'))
+```
+
+This will render the HTML in the browser.
+
+For debugging, you can right-click on the rendered HTML in the browser and select “Inspect” to see the underlying HTML that was generated. There you’ll also find the ‘network’ tab, which shows you the requests that were made to render the page. Refresh and look for the request to `127.0.0.1` \- and you’ll see it’s just a `GET` request to `/`, and the response body is the HTML you just returned.
+
+You can also use Starlette’s `TestClient` to try it out in a notebook:
+
+```
+from starlette.testclient import TestClient
+client = TestClient(app)
+r = client.get("/")
+r.text
+```
+
+FastHTML wraps things in an Html tag if you don’t do it yourself (unless the request comes from htmx, in which case you get the element directly). See the section ‘XT objects and HTML’ for more on creating custom components or adding HTML rendering to existing python objects. To give the page a non-default title, return a Title before your main content:
+
+```
+app = FastHTML()
+
+@app.get("/")
+def home():
+    return Title("Page Demo"), Div(H1('Hello, World'), P('Some text'), P('Some more text'))
+
+client = TestClient(app)
+print(client.get("/").text)
+```
+
+We’ll use this pattern often in the examples to follow.
+
+## Defining Routes
+
+The HTTP protocol defines a number of methods (‘verbs’) to send requests to a server. The most common are GET, POST, PUT, DELETE, and HEAD. We saw ‘GET’ in action before - when you navigate to a URL, you’re making a GET request to that URL. We can do different things on a route for different HTTP methods. For example:
+
+```
+@app.route("/", methods='get')
+def home():
+    return H1('Hello, World')
+
+@app.route("/", methods=['post', 'put'])
+def post():
+    return "got a post or put request"__
+```
+
+This says that when someone navigates to the root URL “/” (i.e. sends a GET request), they will see the big “Hello, World” heading. When someone submits a POST or PUT request to the same URL, the server should return the string “got a post or put request”.
+
+Aside: You can test the POST request with `curl -X POST http://127.0.0.1:8000 -d "some data"`. This sends some data to the server, you should see the response “got a post or put request” printed in the terminal.
+
+There are a few other ways you can specify the route+method - FastHTML has `.get`, `.post`, etc. as shorthand for `route(..., methods=['get'])`, etc.
+
+```
+@app.get("/")
+def my_function():
+    return "Hello World from a get request"__
+```
+
+Or you can use the `@app.route` decorator without a method but specify the method with the name of the function. For example:
+
+```
+@app.route("/")
+def post():
+    return "Hello World from a post request"__
+```
+
+```
+client.post("/").text
+```
+
+```
+'Hello World from a post request'
+```
+
+You’re welcome to pick whichever style you prefer. Using routes let’s you show different content on different pages - ‘/home’, ‘/about’ and so on. You can also respond differently to different kinds of requests to the same route, as we shown above. You can also pass data via the route:
+
+```
+@app.get("/greet/{nm}")
+def greet(nm:str):
+    return f"Good day to you, {nm}!"
+
+client.get("/greet/dave").text
+```
+
+```
+'Good day to you, dave!'
+```
+
+More on this in the ‘More on Routing and Requests’ section, which goes deeper into the different ways to get information from a request.
+
+## Styling Basics
+
+Plain HTML probably isn’t quite what you imagine when you visualize your beautiful web app. CSS is the go-to language for styling HTML. But again, we don’t want to learn extra languages unless we absolutely have to! Fortunately, there are ways to get much more visually appealing sites by relying on the hard work of others, using existing CSS libraries. One of our favourites is PicoCSS. To add a CSS file to HTML, you can use the `<link>` tag. Since we typically want things like CSS styling on all pages of our app, FastHTML lets you add shared headers when you define your app. And it already has `picolink` defined for convenience. As per the pico docs, we put all of our content inside a `<main>` tag with a class of `container`:
+
+```
+from fasthtml import *
+# App with custom styling to override the pico defaults
+css = Style(':root { --pico-font-size: 100%; --pico-font-family: Pacifico, cursive;}')
+app = FastHTML(hdrs=(picolink, css))
+
+@app.route("/")
+def get():
+    return Title("Hello World"), Main(H1('Hello, World'), cls="container")
+```
+
+Aside: We’re returning a tuple here (a title and the main page). This is needed to tell FastHTML to turn the main body into a full HTML page that includes the headers (including the pico link and our custom css) which we passed in.
+
+You can check out the pico examples page to see how different elements will look. If everything is working, the page should now render nice text with our custom font, and it should respect the user’s light/dark mode preferences too.
+
+If you want to override the default styles or add more custom CSS, you can do so by adding a `<style>` tag to the headers as shown above. So you are allowed to write CSS to your heart’s content - we just want to make sure you don’t necessarily have to! Later on we’ll see examples using other component libraries and tailwind css to do more fancy styling things, along with tips to get an LLM to write all those fiddly bits so you don’t have to.
+
+## Web Page -> Web App
+
+Showing content is all well and good, but we typically expect a bit more _interactivity_ from something calling itself a web app! So, let’s add a few different pages, and use a form to let users add messages to a list:
+
+```
+app = FastHTML()
+messages = ["This is a message, which will get rendered as a paragraph"]
+
+@app.get("/")
+def home():
+    return Main(H1('Messages'), 
+                *[P(msg) for msg in messages],
+                A("Link to Page 2 (to add messages)", href="/page2"))
+
+@app.get("/page2")
+def page2():
+    return Main(P("Add a message with the form below:"),
+                Form(Input(type="text", name="data"),
+                     Button("Submit"),
+                     action="/", method="post"))
+
+@app.post("/")
+def add_message(data:str):
+    messages.append(data)
+    return home()
+```
+
+We re-render the entire homepage to show the newly added message. This is fine, but modern web apps often don’t re-render the entire page, they just update a part of the page. In fact even very complicated applications are often implemented as ‘Single Page Apps’ (SPAs). This is where HTMX comes in.
+
+## HTMX
+
+HTMX addresses some key limitations of HTML. In vanilla HTML, links can trigger a GET request to show a new page, and forms can send requests containing data to the server. A lot of ‘Web 1.0’ design revolved around ways to use these to do everything we wanted. But why should only _some_ elements be allowed to trigger requests? And why should we refresh the _entire page_ with the result each time one does? HTMX extends HTML to allow us to trigger requests from _any_ element on all kinds of events, and to update a part of the page without refreshing the entire page. It’s a powerful tool for building modern web apps.
+
+It does this by adding attributes to HTML tags to make them do things. For example, here’s a page with a counter and a button that increments it:
+
+```
+app = FastHTML()
+
+count = 0
+
+@app.get("/")
+def home():
+    return Title("Count Demo"), Main(
+        H1("Count Demo"),
+        P(f"Count is set to {count}", id="count"),
+        Button("Increment", hx_post="/increment", hx_target="#count", hx_swap="innerHTML")
+    )
+
+@app.post("/increment")
+def increment():
+    print("incrementing")
+    global count
+    count += 1
+    return f"Count is set to {count}"__
+```
+
+The button triggers a POST request to `/increment` (since we set `hx_post="increment"`), which increments the count and returns the new count. The `hx_target` attribute tells HTMX where to put the result. If no target is specified it replaces the element that triggered the request. The `hx_swap` attribute specifies how it adds the result to the page. Useful options are:
+
+  * _`innerHTML`_ : Replace the target element’s content with the result.
+  * _`outerHTML`_ : Replace the target element with the result.
+  * _`beforebegin`_ : Insert the result before the target element.
+  * _`beforeend`_ : Insert the result inside the target element, after its last child.
+  * _`afterbegin`_ : Insert the result inside the target element, before its first child.
+  * _`afterend`_ : Insert the result after the target element.
+
+You can also use an hx_swap of `delete` to delete the target element regardless of response, or of `none` to do nothing.
+
+By default, requests are triggered by the “natural” event of an element - click in the case of a button (and most other elements). You can also specify different triggers, along with various modifiers - see the HTMX docs for more.
+
+This pattern of having elements trigger requests that modify or replace other elements is a key part of the HTMX philosophy. It takes a little getting used to, but once mastered it is extremely powerful.
+
+### Replacing Elements Besides the Target
+
+Sometimes having a single target is not enough, and we’d like to specify some additional elements to update or remove. In these cases, returning elements with an id that matches the element to be replaces and `hx_swap_oob='true'` will replace those elements too. We’ll use this in the next example to clear an input field when we submit a form.
+
+## More on Routing and Request Parameters
+
+There are a number of ways information can be passed to the server. When you specify arguments to a route, FastHTML will search the request for values with the same name, and convert them to the correct type. In order, it searchs
+
+  * The path parameters
+  * The query parameters
+  * The cookies
+  * The headers
+  * The session
+  * Form data
+
+There are also a few special arguments
+
+  * `request` (or any prefix like `req`): gets the raw Starlette `Request` object
+  * `session` (or any prefix like `sess`): gets the session object
+  * `auth`
+  * `htmx`
+  * `app`
+
+In this section let’s quickly look at some of these in action.
+
+```
+app = FastHTML()
+cli = TestClient(app)
+```
+
+Part of the route (path parameters):
+
+```
+@app.get('/user/{nm}')
+def _(nm:str): return f"Good day to you, {nm}!"
+
+cli.get('/user/jph').text
+```
+
+Matching with a regex:
+
+```
+reg_re_param("imgext", "ico|gif|jpg|jpeg|webm")
+
+@app.get(r'/static/{path:path}{fn}.{ext:imgext}')
+def get_img(fn:str, path:str, ext:str): return f"Getting {fn}.{ext} from /{path}"
+
+cli.get('/static/foo/jph.ico').text
+```
+
+Using an enum (try using a string that isn’t in the enum):
+
+```
+ModelName = str_enum('ModelName', "alexnet", "resnet", "lenet")
+
+@app.get("/models/{nm}")
+def model(nm:ModelName): return nm
+
+print(cli.get('/models/alexnet').text)
+```
+
+Casting to a Path:
+
+```
+@app.get("/files/{path}")
+def txt(path: Path): return path.with_suffix('.txt')
+
+print(cli.get('/files/foo').text)
+```
+
+An integer with a default value:
+
+```
+fake_db = [{"name": "Foo"}, {"name": "Bar"}]
+
+@app.get("/items/")
+def read_item(idx:int|None = 0): return fake_db[idx]
+
+print(cli.get('/items/?idx=1').text)
+```
+
+Boolean values (takes anything “truthy” or “falsy”):
+
+```
+@app.get("/booly/")
+def booly(coming:bool=True): return 'Coming' if coming else 'Not coming'
+
+print(cli.get('/booly/?coming=true').text)
+```
+
+Getting dates:
+
+```
+@app.get("/datie/")
+def datie(d:date): return d
+
+date_str = "17th of May, 2024, 2p"
+print(cli.get(f'/datie/?d={date_str}').text)
+```
+
+Matching a dataclass:
+
+```
+from dataclasses import dataclass, asdict
+
+@dataclass
+class Bodie:
+    a:int;b:str
+
+@app.route("/bodie/{nm}")
+def post(nm:str, data:Bodie):
+    res = asdict(data)
+    res['nm'] = nm
+    return res
+
+cli.post('/bodie/me', data=dict(a=1, b='foo')).text
+```
+
+### Cookies
+
+Cookies can be set via a Starlette Response object, and can be read back by specifying the name:
+
+```
+from datetime import datetime
+
+@app.get("/setcookie")
+def setc(req):
+    now = datetime.now()
+    res = Response(f'Set to {now}')
+    res.set_cookie('now', str(now))
+    return res
+
+cli.get('/setcookie').text
+```
+
+### User Agent and HX-Request
+
+An argument of `user_agent` will match the header `User-Agent`. This holds for special headers like `HX-Request` (used by HTMX to signal when a request comes from an HTMX request) - the general pattern is that “-” is replaced with “_” and strings are turned to lowercase.
+
+```
+@app.get("/ua")
+async def ua(user_agent:str): return user_agent
+
+cli.get('/ua', headers={'User-Agent':'FastHTML'}).text
+```
+
+```
+@app.get("/hxtest")
+def hxtest(htmx): return htmx.request
+
+cli.get('/hxtest', headers={'HX-Request':'1'}).text
+```
+
+### Starlette Requests
+
+If you add an argument called `request`(or any prefix of that, for example `req`) it will be populated with the Starlette `Request` object. This is useful if you want to do your own processing manually. For example, although FastHTML will parse forms for you, you could instead get form data like so:
+
+```
+@app.get("/form")
+async def form(request:Request):
+    form_data = await request.form()
+    a = form_data.get('a')
+```
+
+See the Starlette docs for more information on the `Request` object.
+
+### Starlette Responses
+
+You can return a Starlette Response object from a route to control the response. For example:
+
+```
+@app.get("/redirect")
+def redirect():
+    return RedirectResponse(url="/")
+```
+
+We used this to set cookies in the previous example. See the Starlette docs for more information on the `Response` object.
+
+### Static Files
+
+We often want to serve static files like images. This is easily done! For common file types (images, CSS etc) we can create a route that returns a Starlette `FileResponse` like so (note that `fast_app` includes this automatically):
+
+```
+# For images, CSS, etc.
+@app.get("/{fname:path}.{ext:static}")
+def static(fname: str, ext: str):
+  return FileResponse(f'{fname}.{ext}')
+```
+
+You can customize it to suit your needs (for example, only serving files in a certain directory). You’ll notice some variant of this route in all our complete examples - even for apps with no static files the browser will typically request a `/favicon.ico` file, for example, and as the astute among you will have noticed this has sparked a bit of competition between Johno and Jeremy regarding which country flag should serve as the default!
+
+## XT objects and HTML
+
+These XT objects create an XML tag structure [tag,children,attrs] for `toxml()`. When we call `Div(...)`, the elements we pass in are the children. Attributes are passed in as keywords. `class` and `for` are special words in python, so we use `cls`, `klass` or `_class` instead of `class` and `fr` or `_for` instead of `for`. Note these objects are just 3-element lists - you can create custom ones too as long as they’re also 3-element lists. Alternately, leaf nodes can be strings instead (which is why you can do `Div('some text')`). If you pass something that isn’t a 3-element list or a string, it will be converted to a string using str()… unless (our final trick) you define a `__xt__` method that will run before str(), so you can render things a custom way.
+
+For example, here’s one way we could make a custom class that can be rendered into HTML:
+
+```
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    def __xt__(self):
+        return ['div', [f'{self.name} is {self.age} years old.'], {}]
+
+p = Person('Jonathan', 28)
+print(to_xml(Div(p, "more text", cls="container")))
+```
+
+In the examples, you’ll see we often patch in `__xt__` methods to existing classes to control how they’re rendered. For example, if Person didn’t have a `__xt__` method or we wanted to override it, we could add a new one like this:
+
+```
+from fastcore.all import patch
+
+@patch
+def __xt__(self:Person):
+    return Div("Person info:", Ul(Li("Name:",self.name), Li("Age:", self.age)))
+
+show(p)
+```
+
+Some tags from fastcore.xml are overwritten by fasthtml.core and a few are furter extended by fasthtml.xtend using this method. Over time, we hope to see others developing custom components too, giving us a larger and larger ecosystem of reusable components.
