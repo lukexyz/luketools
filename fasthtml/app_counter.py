@@ -7,8 +7,8 @@ count = 0
 
 @app.get("/")
 def home():
-    return Title("Count Demo"), Main(
-        H1("The Great Count Demo"),
+    return Title("🎲 Count Demo"), Main(
+        H1("🎲 The Great Counter Demo"),
         P(f"Count is set to {count}", id="count"),
         Button("Increment", hx_post="/increment", hx_target="#count", hx_swap="innerHTML"),
         Button("Decrement", hx_post="/decrement", hx_target="#count", hx_swap="innerHTML")
