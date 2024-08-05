@@ -1,44 +1,83 @@
-# run with: uvicorn main:app --reload
-# or: python main.py with serve()
-
 from fasthtml.common import *
+from fh_altair import altair2fasthml, altair_headers
+import numpy as np
+import pandas as pd
+import altair as alt
 
-app, rt = fast_app(hdrs=(picolink))
+# pip install fh-altair
 
-@rt('/')
-def get():
-    return Container(
-        H1("Interactive F Checklist"),
-        Form(
-            Input(type="number", name="count", placeholder="Enter a f number", min=1, max=20),
-            Button("Generate a Checklist"),
-            hx_post="/generate",
-            hx_target="#checklist"
+app = FastHTML(hdrs=[picolink, altair_headers])
+count = 0
+plotdata = []
+
+# Custom CSS for centering
+custom_css = Style("""
+    .center-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 30vh;
+        text-align: center;
+    }
+""")
+
+def generate_chart():
+    pltr = pd.DataFrame({'y': plotdata, 'x': range(len(plotdata))})
+    chart = alt.Chart(pltr).mark_line().encode(x='x', y='y').properties(width=400, height=200)
+    return altair2fasthml(chart)
+
+
+@app.get("/")
+def home():
+    return (
+        custom_css,
+        Title("🎲 Count Demo with Chart"),
+        Main(
+            H1("🎲 The Great Counter Demo", id="header"),
+            cls="center-container"
         ),
-        Div(id="checklist")
-    )
-
-@rt('/generate')
-def post(count: int):
-    checkboxes = [
-        Div(
-            Input(type="checkbox", id=f"item-{i}", name=f"item-{i}"),
-            Label(f"Item {i}", for_=f"item-{i}"),
-            hx_post=f"/toggle/{i}",
-            hx_trigger="click",
-            hx_target=f"#item-{i}"
+        Main(
+            P(f"Count is set to {count}", id="count"),
+            P(
+                Button("Increment", hx_post="/increment", hx_target="#count"),
+                Button("Decrement", hx_post="/decrement", hx_target="#count"),
+                cls="button-group"
+            ),
+            Div(id="chart"),
+            cls="center-container"
         )
-        for i in range(1, count + 1)
-    ]
-    return Div(*checkboxes)
-
-@rt('/toggle/{item_id}')
-def post(item_id: int, _):
-    checked = Input(type="checkbox", id=f"item-{item_id}", name=f"item-{item_id}", checked=True)
-    return Div(
-        checked,
-        Label(f"Item {item_id} toggled!", for_=f"item-{item_id}"),
-        hx_post=f"/toggle/{item_id}",
-        hx_trigger="click",
-        hx_target=f"#item-{item_id}"
     )
+
+@app.post("/increment")
+def increment():
+    global count, plotdata
+    count += 1
+    plotdata.append(count+np.random.exponential(1))
+    return (
+        P(f"Count is set to {count}", id="count", hx_swap_oob="true"),
+        Div(
+            generate_chart(),
+            P(f"x = {len(plotdata)}, y = {np.round(plotdata[-1], 4)}"),
+            _id="chart",
+            hx_swap_oob="true"
+        )
+    )
+
+@app.post("/decrement")
+def decrement():
+    print("decrementing")
+    global count, plotdata
+    count -= 1
+    plotdata.append(count-np.random.exponential(1))
+    return (
+        P(f"Count is set to {count}", id="count", hx_swap_oob="true"),
+        Div(
+            generate_chart(),
+            P(f"x = {len(plotdata)}, y = {np.round(plotdata[-1], 4)}"),
+            _id="chart",
+            hx_swap_oob="true"
+        )
+    )
+
+serve()
