@@ -15,14 +15,13 @@ apply_style()
 
 st.image("media/llworld.png", width=300)
 
-ascii_art = """
-/_/\\     /_/\\         /_//_//_/\\ /_____\\ /_____\\  /_/\\     /_____\\       
-\\:\\ \\    \\:\\ \\        \\:\\\\:\\\\:\\ \\:::_ \\ \\:::_ \\ \\ \\:\\ \\    \\:::_ \\ \\      
- \\:\\ \\    \\:\\ \\        \\:\\\\:\\\\:\\ \\:\\ \\ \\ \\\\:(_) ) )_\\:\\ \\    \\:\\ \\ \\ \\     
-  \\:\\ \\____\\:\\ \\____    \\:\\\\:\\\\:\\ \\:\\ \\ \\ \\\\: __ \`\\\\ \\:\\ \\____\\:\\ \\ \\ \\    
-   \\:\\/___/\\\\:\\/___/\\    \\:\\\\:\\\\:\\ \\:\\_\\ \\ \\\\: \\ \`\\ \\\\:\\/___/\\\\:\\/.:| |   
-    \_____\\/ \\_____\\/     \\_______\\/ \
-                                                                            
+ascii_art = r"""
+/_/\     /_/\         /_//_//_/\ /_____\ /_____\  /_/\     /_____\       
+\:\ \    \:\ \        \:\\:\\:\ \:::_ \ \:::_ \ \ \:\ \    \:::_ \ \      
+ \:\ \    \:\ \        \:\\:\\:\ \:\ \ \ \\:(_) ) )_\:\ \    \:\ \ \ \     
+  \:\ \____\:\ \____    \:\\:\\:\ \:\ \ \ \\: __ `\\ \:\ \____\:\ \ \ \    
+   \:\/___/\\:\/___/\    \:\\:\\:\ \:\_\ \ \\: \ `\ \\:\/___/\\:\/.:| |   
+    \_____\/ \_____\/     \_______\/ \_____\/
 """
 
 # Use Markdown with HTML for styling
@@ -45,7 +44,7 @@ if selected_model != st.session_state["model"]:
     # Update session state and TOML file if a new model is selected
     st.session_state["model"] = selected_model
     update_selected_model(selected_model)  # This should correctly update the TOML file
-    st.experimental_rerun()
+    st.rerun()
 
 # Use the selected model from session state to determine the client configuration
 if st.session_state["model"] == "local-model":
