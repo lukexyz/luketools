@@ -132,3 +132,6 @@ dmypy.json
 
 
 llmstudio/videos/*
+queries.sql
+llmstudio/settings.toml
+llmstudio/tmp.ipynb
