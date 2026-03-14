@@ -1,6 +1,23 @@
 # luketools
 Personal repo for dev tools
 
+---
+
+### PowerShell Profile
+
+**Stack:**
+- `oh-my-posh` — Paradox theme
+- `Terminal-Icons` + `posh-git`
+- `fastfetch` — boot screen using `my-fastfetch.jsonc`
+- `fnm` — Node version manager with `--use-on-cd`
+- Chocolatey autocomplete
+- `which` alias → `where.exe`
+- Startup: `cd D:\Python` + recent files sorted by date
+
+Full notes and comparison [`projects/project_ps1.md`](projects/project_ps1.md)
+
+---
+
 ### 📝 Notes
 
 **⚡️ Fast Github Auth** 
