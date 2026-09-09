@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Harness &gt; Model</title>
+<style>
+  :root{
+    --bg:#08060d; --bg2:#0d0a16; --panel:#100c1c; --line:#241a3d;
+    --ink:#cfc6e0; --dim:#7d7194; --faint:#4a4160;
+    --p1:#a855f7; --p2:#c084fc; --p3:#7c3aed; --hot:#e9d5ff;
+    --mono:"SFMono-Regular",Menlo,Consolas,"DejaVu Sans Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html{color-scheme:dark}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:13px/1.6 var(--mono); letter-spacing:.01em;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(1100px 620px at 12% -8%, rgba(124,58,237,.16), transparent 62%),
+      radial-gradient(900px 520px at 108% 8%, rgba(168,85,247,.10), transparent 60%);
+    background-attachment:fixed;
+  }
+  body::after{ /* scanline grain */
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:99; opacity:.35;
+    background:repeating-linear-gradient(180deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px);
+  }
+  .wrap{max-width:1020px; margin:0 auto; padding:56px 24px 96px}
+
+  /* ── header ── */
+  header{border-bottom:1px solid var(--line); padding-bottom:26px; margin-bottom:34px}
+  .kicker{color:var(--faint); font-size:10.5px; letter-spacing:.34em; text-transform:uppercase}
+  h1{
+    margin:14px 0 6px; font-size:clamp(28px,5.4vw,50px); line-height:1.02;
+    font-weight:600; letter-spacing:-.02em; color:#fff;
+  }
+  h1 em{
+    font-style:normal; color:var(--p2);
+    text-shadow:0 0 26px rgba(168,85,247,.55), 0 0 70px rgba(168,85,247,.22);
+  }
+  .sub{color:var(--dim); font-size:12.5px; max-width:64ch}
+
+  /* ── source banner ── */
+  .banner{
+    border:1px solid #3b2450; border-left:3px solid var(--p1);
+    background:linear-gradient(90deg,rgba(168,85,247,.10),rgba(168,85,247,.02));
+    padding:16px 20px; margin:30px 0 44px; border-radius:3px;
+  }
+  .banner b{color:var(--p2)}
+  .banner code{
+    display:block; margin-top:11px; padding:11px 13px; background:#060409;
+    border:1px solid var(--line); border-radius:3px; color:var(--dim);
+    font-size:11.5px; overflow-x:auto; white-space:pre;
+  }
+
+  /* ── section ── */
+  section{margin:0 0 60px}
+  h2{
+    font-size:11px; letter-spacing:.30em; text-transform:uppercase; color:var(--p2);
+    font-weight:600; margin:0 0 20px; display:flex; align-items:center; gap:14px;
+  }
+  h2::before{content:""; width:5px; height:5px; background:var(--p1); box-shadow:0 0 10px var(--p1); flex:none}
+  h2::after{content:""; flex:1; height:1px; background:linear-gradient(90deg,var(--line),transparent)}
+
+  /* ── ascii canvas ── */
+  .canvas{
+    background:linear-gradient(180deg,var(--panel),#0a0713);
+    border:1px solid var(--line); border-radius:5px;
+    padding:26px 22px; overflow-x:auto;
+    box-shadow:0 22px 60px -28px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,255,255,.035);
+  }
+  pre{margin:0; font:12px/1.42 var(--mono); color:#6f6489; white-space:pre; tab-size:2}
+  @media(max-width:720px){pre{font-size:9.5px;line-height:1.4}}
+
+  /* ── ascii emphasis tokens ── */
+  .p   {color:var(--p2); font-weight:600; text-shadow:0 0 16px rgba(192,132,252,.5)}
+  .hot {color:var(--hot); font-weight:700; text-shadow:0 0 20px rgba(233,213,255,.65)}
+  .box {color:var(--p3)}
+  .lo  {color:var(--faint)}
+  .it  {color:var(--dim); font-style:italic}
+  .flow{color:var(--p1); animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.42}50%{opacity:1;text-shadow:0 0 16px var(--p1)}}
+  @media(prefers-reduced-motion:reduce){.flow{animation:none;opacity:.85}}
+
+  /* ── rank table ── */
+  table{width:100%; border-collapse:collapse; font-size:12px}
+  th{
+    text-align:left; color:var(--faint); font-weight:500; font-size:10px;
+    letter-spacing:.22em; text-transform:uppercase; padding:0 12px 12px 0;
+    border-bottom:1px solid var(--line);
+  }
+  td{padding:13px 12px 13px 0; border-bottom:1px solid #17112a; vertical-align:middle}
+  tr:hover td{background:rgba(168,85,247,.045)}
+  .rk{color:var(--faint); width:34px; font-variant-numeric:tabular-nums}
+  tr.top .rk{color:var(--p2); font-weight:700; text-shadow:0 0 12px rgba(192,132,252,.6)}
+  tr.top .nm{color:var(--p2); font-weight:600}
+  tr.dim td{opacity:.5}
+  .nm{color:var(--ink); white-space:nowrap}
+  .note{color:var(--dim); font-size:11.5px}
+  .bar{width:130px}
+  .bar i{
+    display:block; height:5px; border-radius:2px;
+    background:linear-gradient(90deg,var(--p3),var(--p1),var(--p2));
+    box-shadow:0 0 14px rgba(168,85,247,.45);
+  }
+  tr.dim .bar i{background:var(--faint); box-shadow:none}
+
+  /* ── metric cards ── */
+  .metrics{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px}
+  .m{
+    border:1px solid var(--line); border-radius:5px; padding:22px;
+    background:linear-gradient(160deg,rgba(168,85,247,.09),rgba(10,7,19,.6));
+    position:relative; overflow:hidden;
+  }
+  .m::before{
+    content:""; position:absolute; inset:0 auto 0 0; width:2px;
+    background:linear-gradient(180deg,var(--p1),transparent); box-shadow:0 0 16px var(--p1);
+  }
+  .m .lab{color:var(--faint); font-size:10px; letter-spacing:.24em; text-transform:uppercase}
+  .m .val{
+    font-size:42px; font-weight:700; color:var(--p2); line-height:1.08; margin:10px 0 6px;
+    letter-spacing:-.03em; text-shadow:0 0 34px rgba(168,85,247,.5);
+    font-variant-numeric:tabular-nums;
+  }
+  .m .cap{color:var(--dim); font-size:11.5px; line-height:1.55}
+  .m .cap b{color:var(--ink); font-weight:600}
+
+  /* ── corollaries ── */
+  ol{list-style:none; margin:0; padding:0; counter-reset:c}
+  ol li{
+    counter-increment:c; padding:16px 0 16px 54px; border-bottom:1px solid #17112a;
+    position:relative; color:var(--dim); font-size:12.5px; line-height:1.65;
+  }
+  ol li::before{
+    content:"0" counter(c); position:absolute; left:0; top:16px;
+    color:var(--faint); font-size:11px; letter-spacing:.1em;
+  }
+  ol li b{color:var(--p2); font-weight:600}
+  ol li:last-child{border-bottom:0}
+
+  footer{
+    margin-top:70px; padding-top:22px; border-top:1px solid var(--line);
+    color:var(--faint); font-size:11px; display:flex; gap:20px; flex-wrap:wrap;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Agent Architecture · Thesis Brief</div>
+  <h1>The Harness Outranks<br>the <em>Model</em>.</h1>
+  <p class="sub">Identical weights. Different scaffolding. Different outcome. The variance you can
+  actually control does not live in the checkpoint.</p>
+</header>
+
+<div class="banner">
+  <b>Provenance.</b> Video <code style="display:inline;padding:1px 6px;background:#060409;border:1px solid var(--line)">n9xKblqyQ28</code>
+  was <b>not</b> retrievable — <code style="display:inline;padding:1px 6px;background:#060409;border:1px solid var(--line)">yt-dlp</code>
+  was installed and executed; this sandbox's egress proxy returns <b>403</b> on
+  <code style="display:inline;padding:1px 6px;background:#060409;border:1px solid var(--line)">CONNECT youtube.com:443</code>,
+  and every mirror probed was unreachable. <b>Nothing here is a transcript.</b> The model below is
+  synthesised from the published thesis and its benchmarks. Retrieve the real captions locally:
+  <code>yt-dlp --skip-download --write-auto-subs --sub-langs "en.*" --sub-format vtt \
+       "https://www.youtube.com/watch?v=n9xKblqyQ28"</code>
+</div>
+
+<section>
+  <h2>Control Flow · What Determines the Outcome</h2>
+  <div class="canvas"><pre>
+                          <span class="box">┌───────────────────────────┐</span>
+                          <span class="box">│</span>      TASK  /  INTENT      <span class="box">│</span>
+                          <span class="box">└─────────────┬─────────────┘</span>
+                                        <span class="flow">│</span>
+    <span class="p">╔═══════════════════════════════════▼═══════════════════════════════════╗</span>
+    <span class="p">║</span>                                                                       <span class="p">║</span>
+    <span class="p">║</span>      <span class="hot">T  H  E     H  A  R  N  E  S  S</span>        <span class="p">◄── the leverage</span>          <span class="p">║</span>
+    <span class="p">║</span>                                                                       <span class="p">║</span>
+    <span class="p">║</span>   <span class="box">┌────────────┬────────────┬────────────┬────────────┬───────────┐</span>   <span class="p">║</span>
+    <span class="p">║</span>   <span class="box">│</span>  <span class="p">CONTEXT</span>   <span class="box">│</span>   <span class="p">TOOLS</span>    <span class="box">│</span>  <span class="p">SANDBOX</span>   <span class="box">│</span>   <span class="p">MEMORY</span>   <span class="box">│</span> <span class="p">SUBAGENTS</span> <span class="box">│</span>   <span class="p">║</span>
+    <span class="p">║</span>   <span class="box">│</span> <span class="it">prompts,</span>   <span class="box">│</span>  <span class="it">scoped,</span>   <span class="box">│</span> <span class="it">perms,</span>     <span class="box">│</span> <span class="it">state that</span> <span class="box">│</span> <span class="it">decompose</span> <span class="box">│</span>   <span class="p">║</span>
+    <span class="p">║</span>   <span class="box">│</span> <span class="it">CLAUDE.md</span>  <span class="box">│</span>  <span class="it">typed</span>     <span class="box">│</span> <span class="it">blast rad.</span> <span class="box">│</span> <span class="it">outlives</span>   <span class="box">│</span> <span class="it">+ delegate</span><span class="box">│</span>   <span class="p">║</span>
+    <span class="p">║</span>   <span class="box">└─────┬──────┴─────┬──────┴─────┬──────┴─────┬──────┴─────┬─────┘</span>   <span class="p">║</span>
+    <span class="p">║</span>         <span class="box">└────────────┴──────┬─────┴────────────┴────────────┘</span>         <span class="p">║</span>
+    <span class="p">║</span>                             <span class="flow">│</span>                                         <span class="p">║</span>
+    <span class="p">║</span>                     <span class="box">┌───────▼────────┐</span>                                <span class="p">║</span>
+    <span class="p">║</span>                     <span class="box">│</span>   <span class="hot">AGENT LOOP</span>   <span class="box">│</span><span class="flow">◄────────────────┐</span>              <span class="p">║</span>
+    <span class="p">║</span>                     <span class="box">└───────┬────────┘</span>                <span class="flow">│</span>               <span class="p">║</span>
+    <span class="p">╚═════════════════════════════│═════════════════════════│═══════════════╝</span>
+                                  <span class="flow">▼</span>                         <span class="flow">│</span>
+                        <span class="box">┌───────────────────┐</span>               <span class="flow">│</span>
+                        <span class="box">│</span>       MODEL       <span class="box">│</span>               <span class="flow">│</span>  <span class="p">feedback</span>
+                        <span class="box">│</span>  <span class="it">commodity tier</span>   <span class="box">│</span>               <span class="flow">│</span>   <span class="p">is the</span>
+                        <span class="box">│</span> <span class="it">swappable · churns</span><span class="box">│</span>               <span class="flow">│</span>  <span class="p">whole game</span>
+                        <span class="box">└─────────┬─────────┘</span>               <span class="flow">│</span>
+                                  <span class="flow">▼</span>                         <span class="flow">│</span>
+                        <span class="box">┌───────────────────┐</span>   <span class="lo">fail</span>        <span class="flow">│</span>
+                        <span class="box">│</span>     <span class="p">VALIDATOR</span>     <span class="box">├───────────────┘</span>
+                        <span class="box">│</span> <span class="it">tests·lint·types</span>  <span class="box">│</span>
+                        <span class="box">└─────────┬─────────┘</span>
+                                  <span class="lo">│</span> <span class="lo">pass</span>
+                                  <span class="box">▼</span>
+                        <span class="box">┌───────────────────┐</span>
+                        <span class="box">│</span>      <span class="hot">OUTCOME</span>      <span class="box">│</span>
+                        <span class="box">└───────────────────┘</span>
+</pre></div>
+</section>
+
+<section>
+  <h2>Leverage Ranking</h2>
+  <table>
+    <thead><tr><th class="rk">#</th><th>Lever</th><th class="bar">Marginal return</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr class="top"><td class="rk">01</td><td class="nm">Feedback loop</td><td class="bar"><i style="width:100%"></i></td><td class="note">A model that cannot see its own failure cannot correct it.</td></tr>
+      <tr class="top"><td class="rk">02</td><td class="nm">Context curation</td><td class="bar"><i style="width:88%"></i></td><td class="note">Signal density beats token count. Always.</td></tr>
+      <tr class="top"><td class="rk">03</td><td class="nm">Tool design</td><td class="bar"><i style="width:76%"></i></td><td class="note">Narrow, typed tools beat one omnipotent shell.</td></tr>
+      <tr><td class="rk">04</td><td class="nm">Sandbox &amp; perms</td><td class="bar"><i style="width:58%"></i></td><td class="note">Bounds the blast radius — which is what unlocks autonomy.</td></tr>
+      <tr><td class="rk">05</td><td class="nm">Sub-agents</td><td class="bar"><i style="width:46%"></i></td><td class="note">Context isolation and parallel decomposition.</td></tr>
+      <tr class="dim"><td class="rk">06</td><td class="nm">Model version</td><td class="bar"><i style="width:28%"></i></td><td class="note">Real, but the smallest knob — and the one you don't own.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>The Two Load-Bearing Numbers</h2>
+  <div class="metrics">
+    <div class="m">
+      <div class="lab">HarnessBench · 106 coding tasks</div>
+      <div class="val">&gt;20<span style="font-size:20px">pp</span></div>
+      <div class="cap">Spread produced by <b>swapping the harness alone</b>, with model weights held constant.</div>
+    </div>
+    <div class="m">
+      <div class="lab">ARC-AGI · identical weights</div>
+      <div class="val">30 → 95<span style="font-size:20px">%</span></div>
+      <div class="cap">Same checkpoint. <b>Weak harness to strong harness.</b> A 3× swing with zero training.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Why It Compounds · Asymmetric Half-Lives</h2>
+  <div class="canvas"><pre>
+   <span class="lo">MODEL     ├──┤├──┤├──┤├──┤├──┤├──┤├──┤├──┤     obsolete every few months</span>
+   <span class="lo">          <span class="it">you rent it</span></span>
+
+   <span class="hot">HARNESS   ├──────────────────────────────────────┤     carries forward intact</span>
+             <span class="p">you own it — and it compounds</span>
+                                                  <span class="flow">▲</span>
+                    <span class="lo">a stronger model ships ───────</span><span class="flow">┘</span> <span class="lo">your context files,</span>
+                                                    <span class="lo">tool list and guardrails</span>
+                                                    <span class="p">transfer unchanged</span>
+</pre></div>
+</section>
+
+<section>
+  <h2>Corollaries</h2>
+  <ol>
+    <li><b>Harness investment is the only durable investment.</b> Model spend depreciates on a one-quarter schedule. Harness spend does not.</li>
+    <li><b>A strong harness on a weak model beats a weak harness on a strong model.</b> This is the democratisation argument — local open-weights become viable.</li>
+    <li><b>Benchmark the harness, not the model.</b> A leaderboard score with no stated harness is an unfalsifiable number.</li>
+    <li><b>"Just use the better model" is the expensive way to avoid engineering.</b></li>
+  </ol>
+</section>
+
+<footer>
+  <span>purple = load-bearing / critical path</span>
+  <span>╔═╗ = under your control</span>
+  <span>┌─┐ = commodity or derived</span>
+  <span>synthesised from published thesis — not a transcript</span>
+</footer>
+
+</div>
+</body>
+</html>
