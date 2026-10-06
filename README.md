@@ -1,4 +1,7 @@
-# luketools
+<p align="center">
+  <a href="https://github.com/lukexyz/luketools"><img src="assets/03-nfo-02.svg" width="100%" alt="luketools — PC NFO: shaded block logo with fades and debris (SAC school)"></a>
+</p>
+
 Personal repo for dev tools
 
 ---
